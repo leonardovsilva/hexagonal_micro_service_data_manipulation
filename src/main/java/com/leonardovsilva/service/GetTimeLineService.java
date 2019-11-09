@@ -1,5 +1,6 @@
 package com.leonardovsilva.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -19,7 +20,26 @@ public class GetTimeLineService implements GetTimeLineQuery {
 	
 	@Override
 	public List<TimeLineUI> getTimeLine() {
-		return loadTimeLinePort.loadTimeLine();
+		return parseToTimeLineUi(loadTimeLinePort.loadTimeLine());
+	}
+	
+	@Override
+	public List<TimeLineUI> parseToTimeLineUi(List<TimeLine> timeLines){
+		
+		List<TimeLineUI> timeLineUIList = new ArrayList<TimeLineUI>();
+		
+		for (TimeLine timeLine : timeLines) {
+			TimeLineUI timeLineUI = new TimeLineUI();
+			timeLineUI.setRevenue(timeLine.getRevenue());
+			timeLineUI.setStore_name(timeLine.getStoreName());
+			timeLineUI.setTransaction_id(timeLine.getTransactionId());
+			timeLineUI.setProducts(timeLine.getProducts());
+			timeLineUI.setTimestamp(timeLine.converTimeStampToString(timeLine.getTimeStamp()));
+			
+			timeLineUIList.add(timeLineUI);
+		}
+		
+		return timeLineUIList;
 	}
 
 }

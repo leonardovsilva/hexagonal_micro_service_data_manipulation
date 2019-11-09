@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.leonardovsilva.domain.TimeLine;
 import com.leonardovsilva.port.GetTimeLineQuery;
 
 import lombok.RequiredArgsConstructor;

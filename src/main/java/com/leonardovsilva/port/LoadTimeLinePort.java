@@ -2,9 +2,9 @@ package com.leonardovsilva.port;
 
 import java.util.List;
 
-import com.leonardovsilva.adapter.TimeLineUI;
+import com.leonardovsilva.domain.TimeLine;
 
 public interface LoadTimeLinePort {
 
-	List<TimeLineUI> loadTimeLine();
+	List<TimeLine> loadTimeLine();
 }

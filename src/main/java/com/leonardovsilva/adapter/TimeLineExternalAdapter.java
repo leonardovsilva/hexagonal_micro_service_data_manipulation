@@ -1,6 +1,5 @@
 package com.leonardovsilva.adapter;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -28,34 +27,13 @@ public class TimeLineExternalAdapter implements LoadTimeLinePort {
 	ExternalApiProperty externalApiProperty;
 	
 	@Override
-	public List<TimeLineUI> loadTimeLine() {
+	public List<TimeLine> loadTimeLine() {
 		ResponseEntity<LinkedHashMap<String, TimeLineExternalEntity[]>> timeLineExternalMap = restTemplate().exchange(
 				externalApiProperty.getLink(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<LinkedHashMap<String, TimeLineExternalEntity[]>>() {});
 		
 		TimeLineExternalEntity[] timeLineExternalEntities = timeLineExternalMap.getBody().get("events");
 
-		List<TimeLine> timeLines = new TimeLineExternalParser(timeLineExternalEntities).parseToTimeLine();
-		
-		return this.parseToTimeLineUi(timeLines);
+		return new TimeLineExternalParser(timeLineExternalEntities).parseToTimeLine();
 	}
-	
-	private List<TimeLineUI> parseToTimeLineUi(List<TimeLine> timeLines){
-		
-		List<TimeLineUI> timeLineUIList = new ArrayList<TimeLineUI>();
-		
-		for (TimeLine timeLine : timeLines) {
-			TimeLineUI timeLineUI = new TimeLineUI();
-			timeLineUI.setRevenue(timeLine.getRevenue());
-			timeLineUI.setStore_name(timeLine.getStoreName());
-			timeLineUI.setTransaction_id(timeLine.getTransactionId());
-			timeLineUI.setProducts(timeLine.getProducts());
-			timeLineUI.setTimestamp(timeLine.converTimeStampToString(timeLine.getTimeStamp()));
-			
-			timeLineUIList.add(timeLineUI);
-		}
-		
-		return timeLineUIList;
-	}
-
 }
