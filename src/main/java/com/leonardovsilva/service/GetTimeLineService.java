@@ -29,13 +29,13 @@ public class GetTimeLineService implements GetTimeLineQuery {
 		List<TimeLineUI> timeLineUIList = new ArrayList<TimeLineUI>();
 		
 		for (TimeLine timeLine : timeLines) {
-			TimeLineUI timeLineUI = new TimeLineUI();
-			timeLineUI.setRevenue(timeLine.getRevenue());
-			timeLineUI.setStore_name(timeLine.getStoreName());
-			timeLineUI.setTransaction_id(timeLine.getTransactionId());
-			timeLineUI.setProducts(timeLine.getProducts());
-			timeLineUI.setTimestamp(timeLine.converTimeStampToString(timeLine.getTimeStamp()));
-			
+			TimeLineUI timeLineUI = new TimeLineUI()
+					.setRevenue(timeLine.getRevenue())
+					.setStoreName(timeLine.getStoreName())
+					.setTransactionId(timeLine.getTransactionId())
+					.setProducts(timeLine.getProducts())
+					.setTimestamp(timeLine.converTimeStampToString(timeLine.getTimeStamp()));
+	
 			timeLineUIList.add(timeLineUI);
 		}
 		
