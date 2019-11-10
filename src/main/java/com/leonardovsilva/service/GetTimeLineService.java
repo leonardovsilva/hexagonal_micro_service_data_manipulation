@@ -3,8 +3,11 @@ package com.leonardovsilva.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.leonardovsilva.adapter.TimeLineExternalUI;
 import com.leonardovsilva.adapter.TimeLineUI;
 import com.leonardovsilva.domain.TimeLine;
 import com.leonardovsilva.port.GetTimeLineQuery;
@@ -18,13 +21,16 @@ public class GetTimeLineService implements GetTimeLineQuery {
 
 	private final LoadTimeLinePort loadTimeLinePort;
 	
+	@Autowired
+	Environment environment;
+	
 	@Override
-	public List<TimeLineUI> getTimeLine() {
+	public TimeLineExternalUI getTimeLine() {
 		return parseToTimeLineUi(loadTimeLinePort.loadTimeLine());
 	}
 	
 	@Override
-	public List<TimeLineUI> parseToTimeLineUi(List<TimeLine> timeLines){
+	public TimeLineExternalUI parseToTimeLineUi(List<TimeLine> timeLines){
 		
 		List<TimeLineUI> timeLineUIList = new ArrayList<TimeLineUI>();
 		
@@ -39,7 +45,7 @@ public class GetTimeLineService implements GetTimeLineQuery {
 			timeLineUIList.add(timeLineUI);
 		}
 		
-		return timeLineUIList;
+		return new TimeLineExternalUI(timeLineUIList, environment.getProperty("local.server.port"));
 	}
 
 }
