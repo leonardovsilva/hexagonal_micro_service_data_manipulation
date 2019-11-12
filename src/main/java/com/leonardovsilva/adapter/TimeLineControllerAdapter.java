@@ -1,5 +1,7 @@
 package com.leonardovsilva.adapter;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +16,15 @@ public class TimeLineControllerAdapter {
 	private final GetTimeLineQuery getTimeLineQuery;
 
 	@GetMapping(path = "/timeline")
-	TimeLineExternalUI getTimeLine() {
+	ResponseEntity<TimeLineExternalUI> getTimeLine() {
 		
-		return getTimeLineQuery.getTimeLine();
+		TimeLineExternalUI timeLineExternalUI = getTimeLineQuery.getTimeLine();
+		
+		if (timeLineExternalUI != null) {
+			return new ResponseEntity<>(getTimeLineQuery.getTimeLine(),HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		}
 	}
 }

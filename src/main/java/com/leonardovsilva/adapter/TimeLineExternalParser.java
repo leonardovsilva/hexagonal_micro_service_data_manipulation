@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.leonardovsilva.common.SeachInJsonDSL;
+import com.leonardovsilva.common.SeachInJsonDSL.Result;
 import com.leonardovsilva.domain.Product;
 import com.leonardovsilva.domain.TimeLine;
 
@@ -34,70 +36,21 @@ public class TimeLineExternalParser {
 
 	private TimeLine convertToTimeLine(TimeLineExternalEntity timeLineExternalEntity) {
 
+		SeachInJsonDSL seachInJsonDSL = new SeachInJsonDSL(this.timeLineExternalEntities);
+		
 		TimeLine timeLine = new TimeLine(timeLineExternalEntity.getTimestamp(), timeLineExternalEntity.getRevenue());
-		timeLine.setTransactionId(this.searchFieldByPredicate(timeLineExternalEntity, "transaction_id"));
-		Result storeNameResult = this.searchFieldByPredicateInList(Arrays.asList("store_name"), 
-				"transaction_id", timeLine.getTransactionId()).get(0);
+		timeLine.setTransactionId(seachInJsonDSL.searchFieldByPredicate("transaction_id").build().get(0).results.get(0));
+		Result storeNameResult = seachInJsonDSL.searchFieldByPredicateInList(Arrays.asList("store_name"), 
+				"transaction_id", timeLine.getTransactionId()).build().get(0);
 		timeLine.setStoreName(storeNameResult != null ? storeNameResult.results.size() > 0 ? 
 				storeNameResult.results.get(0): null : null);
-		List<Result> productParams = this.searchFieldByPredicateInList(Arrays.asList("product_name", "product_price"), 
-				"transaction_id", timeLine.getTransactionId());
+		List<Result> productParams = seachInJsonDSL.clear().searchFieldByPredicateInList(Arrays.asList("product_name", "product_price"), 
+				"transaction_id", timeLine.getTransactionId()).build();
 		timeLine.setProducts(getProducts(productParams));
 				
 		return timeLine;
 	}
 
-	private String searchFieldByPredicate(TimeLineExternalEntity timeLineExternalEntity, String predicate) {
-
-		List<TimeLineExternalCustomDataEntity> TimeLineExternalCustomDataEntinies = Arrays
-				.asList(timeLineExternalEntity.getCustomData());
-
-		Optional<TimeLineExternalCustomDataEntity> timeLineExternalCustomDataEntity = TimeLineExternalCustomDataEntinies
-				.stream().filter(data -> data.getKey().equals(predicate)).findFirst();
-		if (timeLineExternalCustomDataEntity.isPresent()) {
-			return timeLineExternalCustomDataEntity.get().getValue();
-		} else {
-			return null;
-		}
-	}
-
-	private List<Result> searchFieldByPredicateInList(List<String> predicates, String predicateFilter, String predicateFilterValue) {
-
-		List<Result> searchFieldResult = new ArrayList<Result>();
-
-		if (predicateFilter != null) {
-			for (TimeLineExternalEntity timeLineExternalEntity : this.timeLineExternalEntities) {
-				
-				List<TimeLineExternalCustomDataEntity> TimeLineExternalCustomDataEntinies = Arrays
-						.asList(timeLineExternalEntity.getCustomData());
-
-				Optional<TimeLineExternalCustomDataEntity> timeLineExternalCustomDataEntityFiltered = TimeLineExternalCustomDataEntinies
-						.stream().filter(data -> data.getKey().equals(predicateFilter)
-								&& data.getValue().equals(predicateFilterValue))
-						.findFirst();
-
-				if (timeLineExternalCustomDataEntityFiltered.isPresent()) {
-					
-					Result result = new Result();
-					
-					for (String predicate : predicates) {
-						Optional<TimeLineExternalCustomDataEntity> timeLineExternalCustomDataEntity = TimeLineExternalCustomDataEntinies
-								.stream().filter(data -> data.getKey().equals(predicate)).findFirst();
-
-						if (timeLineExternalCustomDataEntity.isPresent()) {
-							result.results.add(timeLineExternalCustomDataEntity.get().getValue());
-						}
-					}
-					if(!result.results.isEmpty()) {
-						searchFieldResult.add(result);
-					}
-				}
-			}
-		}
-
-		return searchFieldResult;
-	}
-	
 	private List<Product> getProducts(List<Result> params){
 		
 		List<Product> products = new ArrayList<Product>();
@@ -114,9 +67,4 @@ public class TimeLineExternalParser {
 		
 		return products;
 	}
-	
-	class Result {
-		List<String> results = new ArrayList<String>();
-	}
-
 }

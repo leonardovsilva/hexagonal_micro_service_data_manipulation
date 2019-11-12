@@ -32,6 +32,9 @@ public class GetTimeLineService implements GetTimeLineQuery {
 	@Override
 	public TimeLineExternalUI parseToTimeLineUi(List<TimeLine> timeLines){
 		
+		if(timeLines == null)
+			return null;
+		
 		List<TimeLineUI> timeLineUIList = new ArrayList<TimeLineUI>();
 		
 		for (TimeLine timeLine : timeLines) {

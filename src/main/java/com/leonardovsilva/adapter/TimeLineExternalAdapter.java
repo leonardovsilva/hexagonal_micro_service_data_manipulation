@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import com.leonardovsilva.configuration.ExternalApiProperty;
 import com.leonardovsilva.domain.TimeLine;
 import com.leonardovsilva.port.LoadTimeLinePort;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @Component
 public class TimeLineExternalAdapter implements LoadTimeLinePort {
@@ -27,6 +28,7 @@ public class TimeLineExternalAdapter implements LoadTimeLinePort {
 	ExternalApiProperty externalApiProperty;
 	
 	@Override
+	@HystrixCommand(fallbackMethod="loadTimeLineFallback")
 	public List<TimeLine> loadTimeLine() {
 		ResponseEntity<LinkedHashMap<String, TimeLineExternalEntity[]>> timeLineExternalMap = restTemplate().exchange(
 				externalApiProperty.getLink(), HttpMethod.GET, null,
@@ -35,5 +37,10 @@ public class TimeLineExternalAdapter implements LoadTimeLinePort {
 		TimeLineExternalEntity[] timeLineExternalEntities = timeLineExternalMap.getBody().get("events");
 
 		return new TimeLineExternalParser(timeLineExternalEntities).parseToTimeLine();
+	}
+	
+	private List<TimeLine> loadTimeLineFallback() {
+		
+		return null;
 	}
 }
