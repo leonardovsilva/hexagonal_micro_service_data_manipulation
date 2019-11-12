@@ -39,6 +39,7 @@ public class TimeLineExternalAdapter implements LoadTimeLinePort {
 		return new TimeLineExternalParser(timeLineExternalEntities).parseToTimeLine();
 	}
 	
+	@SuppressWarnings("unused")
 	private List<TimeLine> loadTimeLineFallback() {
 		
 		return null;
