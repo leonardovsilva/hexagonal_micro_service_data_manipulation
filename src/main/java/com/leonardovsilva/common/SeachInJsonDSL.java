@@ -10,18 +10,16 @@ import com.leonardovsilva.adapter.TimeLineExternalEntity;
 
 public class SeachInJsonDSL {
 	
-	private List<TimeLineExternalEntity> timeLineExternalEntities;
 	private List<Result> result;
 	
-	public SeachInJsonDSL(List<TimeLineExternalEntity> timeLineExternalEntities) {
-		this.timeLineExternalEntities = timeLineExternalEntities;
+	public SeachInJsonDSL() {
 		this.result = new ArrayList<Result>();
 	}
 	
-	public SeachInJsonDSL searchFieldByPredicate(String predicate) {
+	public SeachInJsonDSL searchFieldByPredicateInObject(TimeLineExternalEntity timeLineExternalEntity, String predicate) {
 
 		List<TimeLineExternalCustomDataEntity> TimeLineExternalCustomDataEntinies = Arrays
-				.asList(this.timeLineExternalEntities.get(0).getCustomData());
+				.asList(timeLineExternalEntity.getCustomData());
 
 		Optional<TimeLineExternalCustomDataEntity> timeLineExternalCustomDataEntity = TimeLineExternalCustomDataEntinies
 				.stream().filter(data -> data.getKey().equals(predicate)).findFirst();
@@ -34,12 +32,13 @@ public class SeachInJsonDSL {
 		return this;
 	}
 	
-	public SeachInJsonDSL searchFieldByPredicateInList(List<String> predicates, String predicateFilter, String predicateFilterValue) {
+	public SeachInJsonDSL searchFieldByPredicateInList(List<TimeLineExternalEntity> timeLineExternalEntities, List<String> predicates, 
+			String predicateFilter, String predicateFilterValue) {
 
 		List<Result> searchFieldResult = new ArrayList<Result>();
 
 		if (predicateFilter != null) {
-			for (TimeLineExternalEntity timeLineExternalEntity : this.timeLineExternalEntities) {
+			for (TimeLineExternalEntity timeLineExternalEntity : timeLineExternalEntities) {
 				
 				List<TimeLineExternalCustomDataEntity> TimeLineExternalCustomDataEntinies = Arrays
 						.asList(timeLineExternalEntity.getCustomData());

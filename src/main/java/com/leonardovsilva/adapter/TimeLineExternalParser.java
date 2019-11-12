@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import com.leonardovsilva.common.SeachInJsonDSL;
 import com.leonardovsilva.common.SeachInJsonDSL.Result;
@@ -36,16 +35,21 @@ public class TimeLineExternalParser {
 
 	private TimeLine convertToTimeLine(TimeLineExternalEntity timeLineExternalEntity) {
 
-		SeachInJsonDSL seachInJsonDSL = new SeachInJsonDSL(this.timeLineExternalEntities);
+		SeachInJsonDSL seachInJsonDSL = new SeachInJsonDSL();
 		
 		TimeLine timeLine = new TimeLine(timeLineExternalEntity.getTimestamp(), timeLineExternalEntity.getRevenue());
-		timeLine.setTransactionId(seachInJsonDSL.searchFieldByPredicate("transaction_id").build().get(0).results.get(0));
-		Result storeNameResult = seachInJsonDSL.searchFieldByPredicateInList(Arrays.asList("store_name"), 
+		
+		timeLine.setTransactionId(seachInJsonDSL.searchFieldByPredicateInObject(timeLineExternalEntity, "transaction_id").build().get(0).results.get(0));
+		
+		Result storeNameResult = seachInJsonDSL.searchFieldByPredicateInList(this.timeLineExternalEntities, Arrays.asList("store_name"), 
 				"transaction_id", timeLine.getTransactionId()).build().get(0);
+		
 		timeLine.setStoreName(storeNameResult != null ? storeNameResult.results.size() > 0 ? 
 				storeNameResult.results.get(0): null : null);
-		List<Result> productParams = seachInJsonDSL.clear().searchFieldByPredicateInList(Arrays.asList("product_name", "product_price"), 
-				"transaction_id", timeLine.getTransactionId()).build();
+		
+		List<Result> productParams = seachInJsonDSL.clear().searchFieldByPredicateInList(this.timeLineExternalEntities, 
+				Arrays.asList("product_name", "product_price"), "transaction_id", timeLine.getTransactionId()).build();
+		
 		timeLine.setProducts(getProducts(productParams));
 				
 		return timeLine;
