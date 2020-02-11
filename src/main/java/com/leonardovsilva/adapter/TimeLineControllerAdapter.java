@@ -23,8 +23,8 @@ public class TimeLineControllerAdapter {
 		if (timeLineExternalUI != null) {
 			return new ResponseEntity<>(getTimeLineQuery.getTimeLine(),HttpStatus.OK);
 		}
-		else {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-		}
+		
+                return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		
 	}
 }
